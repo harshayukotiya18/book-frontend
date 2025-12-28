@@ -5,23 +5,24 @@ import Register from './pages/Register';
 import DefaultRoute from './Guards/DefaultRoute';
 import UserLayout from './Layout/UserLayout';
 import AdminLayout from './Layout/AdminLayout';
-import UserDashboard from './Pages/UserLayout/Dashboard';
-import AdminDashboard from './Pages/AdminLayout/Dashboard';
+import UserDashboard from './pages/UserLayout/Dashboard';
+import AdminDashboard from './pages/AdminLayout/Dashboard';
 import MyBookings from './pages/UserLayout/MyBookings';
 import UserEvent from './pages/UserLayout/Event';
 import AdminEvent from './pages/AdminLayout/Event';
 import Profile from './pages/UserLayout/Profile';
 import Booking from './pages/AdminLayout/Booking';
+import AuthGuard from './Guards/AuthGuard';
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/login",
-      element: <Login />
+      element: <AuthGuard requiredAuth={false}><Login /></AuthGuard>
     },
      {
       path: "/register",
-      element: <Register />
+      element: <AuthGuard requiredAuth={false}><Register /></AuthGuard>
     },
     {
       path:"/",
@@ -31,19 +32,19 @@ function App() {
     // User Routes
     {
       path:"user",
-      element: <UserLayout />,
+      element: <AuthGuard requiredAuth={true} allowedRoles={["USER"]}><UserLayout /></AuthGuard>,
       children: [
         {path: "dashboard", element: <UserDashboard />},
         {path: "my-bookings", element: <MyBookings />},
         {path: "event", element: <UserEvent />},
-        {path: "profile", element: <Profile/> }
+        {path: "profile", element: <Profile/>   }
       ]
     },
 
-    // admin routes
+    // Admin routes
     {
       path:"admin",
-      element: <AdminLayout />,
+      element: <AuthGuard requiredAuth={true} allowedRoles={["ADMIN"]}><AdminLayout /></AuthGuard>,
       children: [
         {path: "dashboard", element: <AdminDashboard/>},
         {path: "bookings", element: <Booking />},
@@ -55,4 +56,4 @@ function App() {
   return <RouterProvider router={router} />;
 }
 
-export default App;
+export default App
